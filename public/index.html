@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>斗地主 · 在线对战</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- 登录 -->
+  <div id="login" class="screen">
+    <div class="lobby-card">
+      <h1>🃏 斗地主</h1>
+      <p class="sub">请登录后开玩</p>
+      <div class="me"><span>账号</span><input id="loginUser" autocomplete="username" placeholder="如 fyb" /></div>
+      <div class="me"><span>密码</span><input id="loginPass" type="password" autocomplete="current-password" placeholder="账号+621" /></div>
+      <button id="loginBtn" class="btn primary big" style="width:100%">登录</button>
+      <div id="loginErr" class="login-err"></div>
+    </div>
+  </div>
+
+  <!-- 大厅 -->
+  <div id="lobby" class="screen hidden">
+    <div class="lobby-card">
+      <h1>🃏 斗地主</h1>
+      <p class="sub">大厅</p>
+      <div class="me">
+        <span>昵称:</span>
+        <input id="nameInput" maxlength="12" />
+        <button id="saveName" class="btn small">改名</button>
+        <button id="logoutBtn" class="btn small">退出登录</button>
+      </div>
+      <div class="me">账号 <b id="myAccount"></b>　<span class="meta" style="opacity:.7">每次开房,房内总分从 0 开始</span></div>
+      <div class="lobby-actions">
+        <button id="quickStart" class="btn primary big">⚡ 快速开始</button>
+        <button id="createRoom" class="btn big">➕ 创建房间</button>
+      </div>
+      <h3>房间列表 <button id="refreshLobby" class="btn small">刷新</button></h3>
+      <div id="roomList" class="room-list"></div>
+      <div class="rules">
+        <b>规则</b>:叫地主 1/2/3 分定底分;炸弹、王炸各翻倍;春天(农民一张未出)/反春天(地主只出一手)再翻倍。
+      </div>
+    </div>
+  </div>
+
+  <!-- 牌桌 -->
+  <div id="table" class="screen hidden">
+    <div class="topbar">
+      <button id="leaveRoom" class="btn small">← 退出</button>
+      <span id="roomTitle"></span>
+      <span id="multInfo" class="mult"></span>
+    </div>
+
+    <div class="seats">
+      <div class="seat opp" id="seatLeft"></div>
+      <div class="seat opp" id="seatRight"></div>
+    </div>
+
+    <div class="center">
+      <div id="bottomCards" class="bottom-cards"></div>
+      <div id="playArea" class="play-area"></div>
+      <div id="statusMsg" class="status-msg"></div>
+      <div id="turnClock" class="turn-clock"></div>
+    </div>
+
+    <div class="me-area">
+      <div id="meInfo" class="me-info"></div>
+      <div id="myHand" class="hand"></div>
+      <div id="actions" class="actions"></div>
+    </div>
+
+    <div id="logBox" class="log-box"></div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="client.js"></script>
+</body>
+</html>

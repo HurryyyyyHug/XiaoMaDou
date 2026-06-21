@@ -1,0 +1,128 @@
+:root {
+  --green: #0b6e3b;
+  --green-d: #084d29;
+  --gold: #f5c542;
+  --red: #d33;
+  --card-w: 58px;
+  --card-h: 82px;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  margin: 0; height: 100%;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  background: radial-gradient(circle at 50% 30%, var(--green) 0%, var(--green-d) 100%);
+  color: #fff; overflow: hidden;
+}
+.screen { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.hidden { display: none !important; }
+.btn {
+  border: none; border-radius: 10px; padding: 8px 14px; font-size: 15px;
+  background: rgba(255,255,255,.15); color: #fff; cursor: pointer; transition: .15s;
+}
+.btn:hover { background: rgba(255,255,255,.28); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.btn.primary { background: var(--gold); color: #5a3d00; font-weight: 700; }
+.btn.danger { background: var(--red); }
+.btn.big { padding: 14px 20px; font-size: 18px; }
+.btn.small { padding: 4px 10px; font-size: 13px; }
+
+/* ===== 大厅 ===== */
+#lobby, #login { align-items: center; justify-content: center; overflow: auto; }
+.login-err { color: #ff8a8a; margin-top: 10px; min-height: 18px; text-align: center; }
+.lobby-card {
+  background: rgba(0,0,0,.28); border-radius: 18px; padding: 24px;
+  width: min(480px, 92vw); margin: 16px;
+}
+.lobby-card h1 { text-align: center; margin: 0 0 4px; font-size: 38px; }
+.sub { text-align: center; opacity: .8; margin: 0 0 16px; }
+.me { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+.me input { flex: 1; padding: 8px; border-radius: 8px; border: none; font-size: 15px; }
+.lobby-actions { display: flex; gap: 10px; margin: 16px 0; }
+.lobby-actions .btn { flex: 1; }
+.room-list { display: flex; flex-direction: column; gap: 8px; max-height: 30vh; overflow: auto; }
+.room-row {
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(255,255,255,.1); padding: 10px 14px; border-radius: 10px;
+}
+.room-row .meta { opacity: .8; font-size: 13px; }
+.rules { margin-top: 16px; font-size: 13px; line-height: 1.6; opacity: .85; background: rgba(0,0,0,.2); padding: 10px; border-radius: 10px; }
+
+/* ===== 牌桌 ===== */
+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(0,0,0,.25); }
+#roomTitle { font-weight: 700; }
+.mult { color: var(--gold); font-weight: 700; }
+.seats { display: flex; justify-content: space-between; padding: 8px 12px; }
+.seat.opp { flex: 1; max-width: 46%; }
+.seat-box {
+  background: rgba(0,0,0,.25); border-radius: 12px; padding: 8px; min-height: 70px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.seat-box.turn { outline: 2px solid var(--gold); box-shadow: 0 0 12px var(--gold); }
+.seat-name { font-weight: 700; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.tag { font-size: 11px; padding: 1px 6px; border-radius: 6px; }
+.tag.landlord { background: var(--gold); color: #5a3d00; }
+.tag.off { background: #777; }
+.seat-cards { font-size: 13px; opacity: .9; }
+.mini-cards { display: flex; gap: 2px; flex-wrap: wrap; }
+.opp-played { min-height: 30px; }
+
+.center { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 4px; }
+.bottom-cards { display: flex; gap: 4px; }
+.play-area { min-height: 90px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.play-label { font-size: 13px; opacity: .8; }
+.status-msg { font-size: 16px; color: var(--gold); font-weight: 700; text-align: center; }
+.turn-clock { font-size: 20px; font-weight: 800; min-height: 24px; }
+.turn-clock.urgent { color: #ff6b6b; }
+
+.me-area { padding: 6px 8px 10px; }
+.me-info { display: flex; align-items: center; gap: 8px; justify-content: center; margin-bottom: 4px; font-size: 14px; }
+.hand { display: flex; justify-content: center; flex-wrap: wrap; min-height: var(--card-h); padding-left: 0; }
+.actions { display: flex; gap: 10px; justify-content: center; margin-top: 10px; flex-wrap: wrap; min-height: 44px; }
+
+/* ===== 扑克牌 ===== */
+.card {
+  width: var(--card-w); height: var(--card-h); background: #fff; color: #222;
+  border-radius: 7px; border: 1px solid #ccc; position: relative; cursor: pointer;
+  flex: 0 0 auto; box-shadow: 0 1px 3px rgba(0,0,0,.4); user-select: none;
+  transition: transform .12s;
+}
+.card .corner { position: absolute; top: 3px; left: 4px; font-size: 14px; font-weight: 700; line-height: 1; text-align: center; }
+.card .mid { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 22px; }
+.card.red { color: var(--red); }
+.card.selected { transform: translateY(-18px); outline: 2px solid var(--gold); }
+.hand .card:not(:first-child) { margin-left: -26px; }
+.hand .card.selected { z-index: 5; }
+.card.mini { width: 26px; height: 36px; border-radius: 4px; }
+.card.mini .corner { font-size: 10px; }
+.card.mini .mid { font-size: 12px; }
+.card.small { width: 40px; height: 58px; }
+.card.small .mid { font-size: 16px; }
+.card.back { background: repeating-linear-gradient(45deg,#16559e,#16559e 6px,#1b66bd 6px,#1b66bd 12px); }
+
+.log-box {
+  background: rgba(0,0,0,.35); font-size: 12px; line-height: 1.5; padding: 6px 10px;
+  max-height: 76px; overflow-y: auto; margin: 0 8px 6px; border-radius: 8px;
+}
+.log-box div { opacity: .9; }
+
+.bid-btns { display: flex; gap: 8px; }
+.result-card {
+  background: rgba(0,0,0,.55); border-radius: 14px; padding: 16px 22px; text-align: center;
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); z-index: 20; min-width: 260px;
+}
+.result-card h2 { margin: 0 0 8px; }
+.result-card .delta { font-size: 15px; margin: 4px 0; }
+.delta.up { color: #7CFC9B; }
+.delta.down { color: #ff8a8a; }
+
+.toast {
+  position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,.85); padding: 10px 18px; border-radius: 10px; z-index: 50; font-size: 14px;
+}
+
+/* 手机竖屏微调 */
+@media (max-width: 600px) {
+  :root { --card-w: 46px; --card-h: 66px; }
+  .hand .card:not(:first-child) { margin-left: -22px; }
+  .lobby-card h1 { font-size: 30px; }
+}
