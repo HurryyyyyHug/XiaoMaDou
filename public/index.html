@@ -34,11 +34,67 @@
       <div class="lobby-actions">
         <button id="quickStart" class="btn primary big">⚡ 快速开始</button>
         <button id="createRoom" class="btn big">➕ 创建房间</button>
+        <button id="historyBtn" class="btn big">📜 历史回放</button>
       </div>
       <h3>房间列表 <button id="refreshLobby" class="btn small">刷新</button></h3>
       <div id="roomList" class="room-list"></div>
       <div class="rules">
         <b>规则</b>:叫地主 1/2/3 分定底分;炸弹、王炸各翻倍;春天(农民一张未出)/反春天(地主只出一手)再翻倍。
+      </div>
+    </div>
+  </div>
+
+  <!-- 历史回放 -->
+  <div id="replayModal" class="modal hidden">
+    <div class="replay-panel">
+      <div class="modal-head">
+        <h2>历史回放</h2>
+        <button id="closeReplay" class="icon-btn" aria-label="关闭">×</button>
+      </div>
+      <div class="replay-body">
+        <div id="replayList" class="replay-list"></div>
+        <div id="replayDetail" class="replay-detail">选择一局查看出牌顺序</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 创建房间 -->
+  <div id="createRoomModal" class="modal hidden">
+    <div class="room-create-panel">
+      <div class="modal-head">
+        <h2>创建房间</h2>
+        <button id="closeCreateRoom" class="icon-btn" aria-label="关闭">×</button>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-label">玩法</div>
+        <label class="choice selected"><input type="radio" name="playMode" value="classic" checked />经典斗</label>
+        <label class="choice disabled"><input type="radio" name="playMode" value="noShuffle" disabled />不洗牌</label>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-label">局数</div>
+        <label class="choice selected"><input type="radio" name="roundPreset" value="6" checked />6局</label>
+        <label class="choice"><input type="radio" name="roundPreset" value="9" />9局</label>
+        <label class="choice"><input type="radio" name="roundPreset" value="18" />18局</label>
+        <label class="choice custom-round-choice"><input type="radio" name="roundPreset" value="custom" />自定义</label>
+        <input id="customRoundLimit" class="custom-round-input" type="number" min="1" max="99" value="12" />
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-label">封顶</div>
+        <label class="choice"><input type="radio" name="maxMultiplier" value="12" />12倍</label>
+        <label class="choice selected"><input type="radio" name="maxMultiplier" value="24" checked />24倍</label>
+      </div>
+
+      <div class="setting-row rules-row">
+        <div class="setting-label">规则</div>
+        <label class="check-choice checked"><input id="allowDouble" type="checkbox" checked />允许加倍</label>
+      </div>
+
+      <div class="modal-actions">
+        <button id="joinAfterCreate" class="btn blue big">加入</button>
+        <button id="confirmCreateRoom" class="btn mint big">免费创建</button>
       </div>
     </div>
   </div>
@@ -51,30 +107,31 @@
       <span id="multInfo" class="mult"></span>
     </div>
 
-    <div class="seats">
-      <div class="seat opp" id="seatLeft"></div>
-      <div class="seat opp" id="seatRight"></div>
-    </div>
+    <div class="table-stage">
+      <div class="table-emblem">斗地主</div>
+      <div class="table-light"></div>
 
-    <div class="center">
-      <div id="bottomCards" class="bottom-cards"></div>
-      <div id="playArea" class="play-area"></div>
-      <div id="statusMsg" class="status-msg"></div>
-      <div id="turnClock" class="turn-clock"></div>
-    </div>
+      <div class="seat opp seat-left" id="seatLeft"></div>
+      <div class="seat opp seat-right" id="seatRight"></div>
 
-    <div class="me-area">
-      <div id="meInfo" class="me-info"></div>
-      <div id="myHand" class="hand"></div>
-      <div id="actions" class="actions"></div>
-    </div>
+      <div class="center">
+        <div id="bottomCards" class="bottom-cards"></div>
+        <div id="playArea" class="play-area"></div>
+        <div id="statusMsg" class="status-msg"></div>
+        <div id="turnClock" class="turn-clock"></div>
+      </div>
 
-    <div id="logBox" class="log-box"></div>
+      <div class="me-area">
+        <div id="meInfo" class="me-info"></div>
+        <div id="myHand" class="hand"></div>
+        <div id="actions" class="actions"></div>
+      </div>
+    </div>
   </div>
 
   <div id="toast" class="toast hidden"></div>
 
   <script src="/socket.io/socket.io.js"></script>
-  <script src="client.js"></script>
+  <script type="module" src="client.js"></script>
 </body>
 </html>

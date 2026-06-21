@@ -1,2 +1,9 @@
 node_modules/
 PNG/
+!public/card_picture/
+!public/card_picture/PNG/
+!public/card_picture/PNG/*.png
+.DS_Store
+data/*.sqlite
+data/*.sqlite-*
+data/users.seed.json

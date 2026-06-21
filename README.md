@@ -3,7 +3,7 @@
 多人网页斗地主,适配**手机端 / 电脑端**。固定账号登录后开玩。
 
 ## 功能
-- **账号登录**:9 个固定账号,密码为「账号+621」(如 `fyb` → `fyb621`)。账号:`sjb mzs fyb lgr zh ylw zy wsq lxy`。
+- **账号登录**:账号保存在本地 SQLite 数据库中。首次启动会从本地 `data/users.seed.json` 初始化账号。
 - **公平发牌**:使用 `crypto.randomInt` 的无偏 Fisher-Yates 洗牌(加密安全随机数),发牌完全随机公平。
 - **叫地主**:1 / 2 / 3 分定底分,最高分者当地主并拿 3 张底牌。
 - **完整牌型**:单张、对子、三张、三带一、三带二、单顺、连对、飞机(带单/带对)、四带二、炸弹、王炸。
@@ -18,6 +18,18 @@
 npm install
 npm start            # 默认端口 3000,打开 http://localhost:3000
 PORT=8080 npm start  # 或指定端口
+```
+
+首次启动会自动创建本地数据库文件:`data/doudizhu.sqlite`,并从 `data/users.seed.json` 写入初始账号。数据库文件和账号种子文件只保存在本机,不会提交到 Git。
+
+本地账号种子文件格式:
+
+```json
+{
+  "users": [
+    { "username": "fyb", "password": "fyb621", "name": "fyb" }
+  ]
+}
 ```
 
 > **改完代码需要重启服务**:Node 不会自动热更新。手动 `Ctrl+C` 再 `npm start`,
@@ -65,10 +77,30 @@ PORT=8080 npm start
 
 ## 文件结构
 ```
-server.js       Express + Socket.IO 服务端、房间与游戏流程
+server.js       应用入口:Express 静态资源 + Socket.IO 启动
 gameLogic.js    牌型识别 / 比较 / 洗牌发牌(纯函数)
+src/
+  config.js          路径、端口、计时配置
+  constants.js       牌型名称等常量
+  state.js           运行时内存状态(players / rooms)
+  db/users.js        SQLite 用户表、账号种子、登录验证、改名
+  db/replays.js      历史牌局记录、回放列表和参与者权限校验
+  game/Room.js       房间模型、叫分、出牌、结算等牌局流程
+  socket/handlers.js Socket.IO 事件处理
+  socket/timers.js   回合倒计时和超时自动操作
 public/
   index.html    页面结构
-  style.css     响应式样式(手机/电脑)
-  client.js     前端交互
+  style.css     CSS 入口,按模块 import
+  client.js     前端 JS 入口
+  js/
+    app.js            登录、大厅、建房和 Socket 连接
+    tableRenderer.js  牌桌渲染
+    cards.js          扑克牌图片映射与渲染
+    dom.js            DOM 工具函数
+  css/
+    base.css     全局变量、基础控件、toast
+    lobby.css    登录页和大厅
+    modal.css    创建房间弹窗
+    table.css    牌桌、手牌、响应式样式
+  card_picture/PNG/ 扑克牌图片资源
 ```
