@@ -9,7 +9,7 @@
   right: 14px;
   z-index: 10;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 12px;
   padding: 8px 12px;
@@ -21,7 +21,9 @@
   box-shadow: var(--shadow-sm);
 }
 #roomTitle { font-weight: 800; text-align: center; color: var(--ink); }
+#roomTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mult { color: var(--coral); font-weight: 800; }
+#audioToggle { justify-self: end; }
 .table-stage {
   position: relative;
   flex: 1;
@@ -257,6 +259,7 @@
   .modal-actions .btn { min-width: 0; flex: 1; }
   .topbar { top: 6px; left: 8px; right: 8px; grid-template-columns: auto 1fr; border-radius: 14px; font-size: 12px; }
   .topbar .mult { grid-column: 1 / -1; text-align: center; font-size: 12px; }
+  .topbar #audioToggle { grid-column: 1 / -1; justify-self: center; }
   .table-stage { padding: 82px 8px 124px; }
   .seat.opp { width: 46vw; }
   .seat-left { left: 8px; top: 92px; }

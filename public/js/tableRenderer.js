@@ -1,5 +1,6 @@
 import { cardEl } from './cards.js';
 import { $, button, escapeHtml, toast } from './dom.js';
+import { announceBid, announcePass, playNextRoundSound, playUiSound } from './audio.js';
 
 let clockInt = null;
 
@@ -151,10 +152,19 @@ function renderActions(s, context) {
     const myPlayerId = s.seats[mySeat]?.playerId;
     const voted = s.dissolve.agree.includes(myPlayerId) || s.dissolve.reject.includes(myPlayerId);
     if (s.dissolve.requester === myPlayerId) {
-      a.appendChild(button('取消解散申请', () => socket.emit('dissolve:cancel')));
+      a.appendChild(button('取消解散申请', () => {
+        playUiSound('pass');
+        socket.emit('dissolve:cancel');
+      }));
     } else if (!voted) {
-      a.appendChild(button('同意解散', () => socket.emit('dissolve:vote', { agree: true }), 'danger'));
-      a.appendChild(button('拒绝并取消解散', () => socket.emit('dissolve:vote', { agree: false })));
+      a.appendChild(button('同意解散', () => {
+        playUiSound('bid');
+        socket.emit('dissolve:vote', { agree: true });
+      }, 'danger'));
+      a.appendChild(button('拒绝并取消解散', () => {
+        playUiSound('pass');
+        socket.emit('dissolve:vote', { agree: false });
+      }));
     } else {
       a.appendChild(button('已投票', () => {}, ''));
       a.lastChild.disabled = true;
@@ -167,10 +177,16 @@ function renderActions(s, context) {
       const wait = button(`等待玩家 (${seated}/3)`, () => {});
       wait.disabled = true;
       a.appendChild(wait);
-      if (debugMode) a.appendChild(button('测试满员发牌', () => socket.emit('debug:fillRoom'), 'debug'));
+      if (debugMode) a.appendChild(button('测试满员发牌', () => {
+        playUiSound('bid');
+        socket.emit('debug:fillRoom');
+      }, 'debug'));
     } else {
       const free = s.seats.includes(null);
-      a.appendChild(button(free ? '坐下' : '暂无空位', () => socket.emit('room:sit'), 'primary'));
+      a.appendChild(button(free ? '坐下' : '暂无空位', () => {
+        playUiSound('select');
+        socket.emit('room:sit');
+      }, 'primary'));
       if (!free) a.lastChild.disabled = true;
     }
     return;
@@ -179,9 +195,15 @@ function renderActions(s, context) {
   if (s.phase === 'bidding' && s.turn === mySeat) {
     const wrap = document.createElement('div');
     wrap.className = 'bid-btns';
-    wrap.appendChild(button('不叫', () => socket.emit('bid', { value: 0 })));
+    wrap.appendChild(button('不叫', () => {
+      announceBid(0);
+      socket.emit('bid', { value: 0 });
+    }));
     [1, 2, 3].forEach((v) => {
-      const b = button(`${v}分`, () => socket.emit('bid', { value: v }), 'primary');
+      const b = button(`${v}分`, () => {
+        announceBid(v);
+        socket.emit('bid', { value: v });
+      }, 'primary');
       if (v <= s.bidding.highest) b.disabled = true;
       wrap.appendChild(b);
     });
@@ -192,10 +214,12 @@ function renderActions(s, context) {
   if (s.phase === 'playing' && s.turn === mySeat) {
     a.appendChild(button('出牌', () => {
       if (!selected.size) return toast('请选择要出的牌');
+      playUiSound('play');
       socket.emit('play', { cards: [...selected] });
       selected.clear();
     }, 'primary'));
     const passBtn = button('不要', () => {
+      announcePass();
       socket.emit('pass');
       selected.clear();
     });
@@ -209,7 +233,10 @@ function renderActions(s, context) {
   }
 
   if (s.phase === 'finished' && mySeat >= 0) {
-    const next = button(s.roomDone ? '已完成全部局数' : '下一局', () => socket.emit('room:next'), 'primary');
+    const next = button(s.roomDone ? '已完成全部局数' : '下一局', () => {
+      playNextRoundSound();
+      socket.emit('room:next');
+    }, 'primary');
     next.disabled = s.roomDone;
     a.appendChild(next);
   }

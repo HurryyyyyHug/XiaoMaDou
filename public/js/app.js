@@ -1,5 +1,6 @@
 import { $, escapeHtml, toast } from './dom.js';
 import { cardEl, preloadCardImages } from './cards.js';
+import { announcePlay, playUiSound, syncVoiceToggle } from './audio.js';
 import { renderTable, startClock } from './tableRenderer.js';
 
 const socket = io();
@@ -33,11 +34,13 @@ function showTable() {
 }
 
 function openCreateRoomModal() {
+  playUiSound('click');
   syncCreateChoices();
   $('createRoomModal').classList.remove('hidden');
 }
 
 function closeCreateRoomModal() {
+  playUiSound('click');
   $('createRoomModal').classList.add('hidden');
 }
 
@@ -73,6 +76,7 @@ function render() {
       if (selected.has(id)) selected.delete(id);
       else selected.add(id);
       el.classList.toggle('selected');
+      playUiSound('select');
     },
   });
 }
@@ -138,6 +142,7 @@ function bindSocketEvents() {
     render();
     // 计时器仅在收到服务器新状态时重置,本地重渲染(如「清空」)不打断倒计时
     startClock(s);
+    announcePlay(s);
   });
 
   socket.on('replay:list', ({ replays }) => {
@@ -174,9 +179,15 @@ function bindDomEvents() {
     state = null;
     showLogin();
   };
-  $('quickStart').onclick = () => socket.emit('room:quickStart');
+  $('quickStart').onclick = () => {
+    playUiSound('success');
+    socket.emit('room:quickStart');
+  };
   $('createRoom').onclick = () => openCreateRoomModal();
-  $('historyBtn').onclick = () => openReplayModal();
+  $('historyBtn').onclick = () => {
+    playUiSound('click');
+    openReplayModal();
+  };
   $('refreshLobby').onclick = () => socket.emit('lobby:get');
   $('saveName').onclick = () => {
     const n = $('nameInput').value.trim();
@@ -184,11 +195,14 @@ function bindDomEvents() {
   };
   $('leaveRoom').onclick = () => {
     if (state && ['bidding', 'playing'].includes(state.phase) && state.yourSeat >= 0) {
+      playUiSound('pass');
       socket.emit('dissolve:request');
       return;
     }
+    playUiSound('pass');
     socket.emit('room:leave');
   };
+  syncVoiceToggle($('audioToggle'));
   $('closeCreateRoom').onclick = () => closeCreateRoomModal();
   $('closeReplay').onclick = () => closeReplayModal();
   $('replayModal').onclick = (e) => {
@@ -198,6 +212,7 @@ function bindDomEvents() {
     if (e.target === $('createRoomModal')) closeCreateRoomModal();
   };
   $('joinAfterCreate').onclick = () => {
+    playUiSound('success');
     closeCreateRoomModal();
     socket.emit('room:quickStart');
   };
@@ -211,6 +226,7 @@ function bindDomEvents() {
       maxMultiplier: Number(document.querySelector('input[name="maxMultiplier"]:checked').value),
       allowDouble: $('allowDouble').checked,
     };
+    playUiSound('success');
     socket.emit('room:create', { options });
     closeCreateRoomModal();
   };

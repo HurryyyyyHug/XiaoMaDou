@@ -355,7 +355,15 @@ export class Room {
           ? Math.max(0, TURN_SECONDS - Math.floor((Date.now() - this.turnStartTime) / 1000))
           : null,
       lastPlay: this.lastPlay
-        ? { seat: this.lastPlay.seat, cards: this.lastPlay.cards, typeName: TYPE_NAMES[this.lastPlay.move.type] }
+        ? {
+          seat: this.lastPlay.seat,
+          cards: this.lastPlay.cards,
+          moveType: this.lastPlay.move.type,
+          typeName: TYPE_NAMES[this.lastPlay.move.type],
+          main: this.lastPlay.move.main,
+          len: this.lastPlay.move.len,
+          bomb: !!this.lastPlay.move.bomb,
+        }
         : null,
       multiplier: this.multiplier,
       baseScore: this.baseScore,
